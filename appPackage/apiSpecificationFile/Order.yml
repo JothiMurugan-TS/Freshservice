@@ -1,0 +1,44 @@
+openapi: 3.0.0
+info:
+  title: Freshservice
+  description: API specification for Freshservice
+  version: 1.0.0
+servers:
+  - url: ${{OPENAPI_SERVER_URL}}/api
+    description: The freshservice purchase api server
+
+paths:
+  /Orders:
+    get:
+      operationId: listPurchaseOrder
+      summary: Returns a list of Purchase Order with their details based on order details
+      description: Returns a list of Purchase Order with their details based on order details
+      responses:
+        '200':
+          description: A list of Purchase Order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: The unique identifier of the Purchase order
+                        po_number:
+                          type: number
+                          description: Purchase order number
+                        name:
+                          type: string
+                          description: Purchase order name
+                        total_cost:
+                          type: number
+                          description: Cost of the product
+                        expected_delivery_date:
+                          type: string
+                          format: date
+                          description: Delivery date of the product

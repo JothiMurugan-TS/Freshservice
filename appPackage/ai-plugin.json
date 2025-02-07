@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/plugin/v2.2/schema.json",
+  "schema_version": "v2.2",
+  "namespace": "Purchase",
+  "name_for_human": "Freshservice Connect${{APP_NAME_SUFFIX}}",
+  "description_for_human": "Purchase order of freshservice",
+  "description_for_model": "Plugin for retrieving the Purchase order",
+
+  "functions": [
+    {
+      "name": "listPurchaseOrder",
+      "description": "Returns a list of Purchase Order with their details based on order details",
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$.orders",
+          "properties": {
+            "title": "$.name",
+            "subtitle": "$.id"
+          },
+          "static_template": 
+          {
+              "type": "AdaptiveCard",
+              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+              "version": "1.4",
+              "body": [
+                {
+                  "type": "Container",
+                  "items": [
+                    {
+                      "type": "TextBlock",
+                      "text": "Purchase Orders",
+                      "weight": "Bolder",
+                      "size": "Large",
+                      "separator": true
+                    },
+                    {
+                      "type": "Container",
+                      "$data": "${$root}",
+                      "items": [
+                        {
+                          "type": "Container",
+                          "items": [
+                            {
+                              "type": "TextBlock",
+                              "text": "Vendor: ${name}",
+                              "weight": "Bolder",
+                              "wrap": true
+                            },
+                            {
+                              "type": "TextBlock",
+                              "text": "Price: $${total_cost}",
+                              "weight": "Bolder",
+                              "wrap": true
+                            }
+                          ]
+                        },
+                        {
+                          "type": "TextBlock",
+                          "text": " ",
+                          "separator": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            
+          }
+          }          
+
+          }
+  ],
+  
+  "runtimes": [
+    {
+      "type": "OpenApi",
+      "auth": {
+        "type": "ApiKeyPluginVault",
+        "reference_id": "Freshservice_credentials"
+      },
+      "spec": {
+        "url": "apiSpecificationFile/Order.yml",
+        "progress_style": "ShowUsageWithInputAndOutput"
+      },
+      "run_for_functions": ["listPurchaseOrder"]
+    }
+  ],
+  "capabilities": {
+    "conversation_starters": [
+      {
+        "text": "List the purchase order"
+      }
+    ]
+  }
+}
