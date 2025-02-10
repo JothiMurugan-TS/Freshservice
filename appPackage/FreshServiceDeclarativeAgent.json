@@ -6,7 +6,16 @@
     "instructions": "$[file('instruction.txt')]",
     "conversation_starters": [
         {
-            "text": "Retrieve all Purchase order"
+            "text": "Retrieve purchase order with ID "
+        },
+        {
+            "text":"Show me all the purchase items for [Order name]"
+        },
+        {
+            "text": "Show purchase orders with the total cost over $1000"
+        },
+        {
+            "text": "What information do I need to provide to fetch a purchase order?"
         }
     ],
     "actions": [

@@ -27,8 +27,10 @@ const getPurchaseOrders = async (): Promise<any> => {
     try {
       const response = await axios.get(baseURL, {
         headers,
-        timeout: 5000,  // 5 seconds timeout
+        //timeout: 5000,  // 5 seconds timeout
+
       });
+    console.log(response.data);
 
       if (!response.data || !response.data.purchase_orders) {
         console.error('Invalid data format or missing purchase orders');
@@ -83,11 +85,11 @@ export async function Orders(
   context: InvocationContext
 ): Promise<HttpResponseInit> {
   context.log(`[${new Date().toISOString()}] HTTP trigger function processed a request.`);
-
+ 
   try {
     const orderResponse = await getPurchaseOrders();
     context.log(`[${new Date().toISOString()}] Purchase orders fetched:`, JSON.stringify(orderResponse.purchase_orders));
-
+    
     return {
       status: 200,
       jsonBody: {

@@ -29,9 +29,6 @@ paths:
                         id:
                           type: string
                           description: The unique identifier of the Purchase order
-                        po_number:
-                          type: number
-                          description: Purchase order number
                         name:
                           type: string
                           description: Purchase order name
@@ -42,3 +39,6 @@ paths:
                           type: string
                           format: date
                           description: Delivery date of the product
+                        tax_percentage:
+                          type: number
+                          description: percentage of the tax for the purchase order

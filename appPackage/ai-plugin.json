@@ -42,7 +42,7 @@
                           "items": [
                             {
                               "type": "TextBlock",
-                              "text": "Vendor: ${name}",
+                              "text": "Order name: ${name}",
                               "weight": "Bolder",
                               "wrap": true
                             },
