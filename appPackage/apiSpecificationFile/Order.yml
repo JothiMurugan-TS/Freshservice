@@ -37,8 +37,133 @@ paths:
                           description: Cost of the product
                         expected_delivery_date:
                           type: string
-                          format: date
+                          format: date-time
                           description: Delivery date of the product
                         tax_percentage:
                           type: number
                           description: percentage of the tax for the purchase order
+    post:
+      operationId: createPurchaseOrder
+      summary: Creates a Purchase Order with its details
+      description: Creates a new Purchase Order with the provided details
+      requestBody: 
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                vendor_id:
+                  type: integer
+                  description: The unique identifier of the vendor
+                name:
+                  type: string
+                  description: Name of the purchase order
+                po_number:
+                  type: string
+                  description: Purchase order number
+                shipping_address:
+                  type: string
+                  description: Shipping address
+                billing_same_as_shipping:
+                  type: boolean
+                  description: Billing address same as shipping
+                expected_delivery_date:
+                  type: string
+                  format: date-time
+                  description: Expected delivery date 
+                currency_code:
+                  type: string
+                  description: Currency code (e.g., USD, EUR)
+  
+
+      responses:
+        '201':
+          description: Purchase Order created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  purchase_order:
+                    type: object
+                    properties:
+                     id:
+                      type: integer
+                      description: The unique identifier of the Purchase Order
+                     name:
+                      type: string
+                      description: Name of the purchase order
+                     po_number:
+                      type: string
+                      description: Unique purchase order number
+                     vendor_id:
+                      type: integer
+                      description: The unique identifier of the vendor
+                     vendor_details:
+                      type: string
+                      nullable: true
+                      description: Details about the vendor
+                     department_id:
+                      type: integer
+                      nullable: true
+                      description: The department ID associated with the purchase order
+                     created_by:
+                      type: integer
+                      description: The ID of the user who created the purchase order
+                     expected_delivery_date: 
+                      type: string
+                      format: date-time
+                      description: Expected delivery date 
+                     shipping_address:
+                      type: string
+                      description: Shipping address
+                     billing_same_as_shipping:
+                      type: boolean
+                      description: Billing address same as shipping
+                     billing_address:
+                      type: string
+                      description: Billing address (if different from shipping)
+                     created_at:
+                      type: string
+                      format: date-time
+                      description: when the purchase order was created
+                     updated_at:
+                      type: string
+                      format: date-time
+                      description: when the purchase order was last updated
+                     custom_fields:
+                      type: object
+                      description: Custom field
+                      properties:
+                        terms_and_conditions:
+                          type: string
+                          nullable: true
+                          description: Terms and conditions for the purchase order
+                     status:
+                      type: integer
+                      description: Status of the purchase Order
+                     currency_code:
+                      type: object
+                      description: Currency details
+                      properties:
+                        id:
+                          type: string
+                          description: Currency code (e.g., USD)
+                        conversion_rate:
+                          type: number
+                          nullable: true
+                          description: Conversion rate for the currency
+                        symbol:
+                          type: string
+                          description: Currency symbol
+                        name:
+                          type: string
+                          description: Name of the currency
+                        currency_country:
+                          type: string
+                          nullable: true
+                          description: Country associated with the currency
+                        separator:
+                          type: string
+                          description: Decimal separator used in currency

@@ -9,7 +9,7 @@
   "functions": [
     {
       "name": "listPurchaseOrder",
-      "description": "Returns a list of Purchase Order with their details based on order details",
+      "description": "Returns a list of Purchase Orders with their details based on order details",
       "capabilities": {
         "response_semantics": {
           "data_path": "$.orders",
@@ -17,61 +17,113 @@
             "title": "$.name",
             "subtitle": "$.id"
           },
-          "static_template": 
-          {
-              "type": "AdaptiveCard",
-              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-              "version": "1.4",
-              "body": [
-                {
-                  "type": "Container",
-                  "items": [
-                    {
-                      "type": "TextBlock",
-                      "text": "Purchase Orders",
-                      "weight": "Bolder",
-                      "size": "Large",
-                      "separator": true
-                    },
-                    {
-                      "type": "Container",
-                      "$data": "${$root}",
-                      "items": [
-                        {
-                          "type": "Container",
-                          "items": [
-                            {
-                              "type": "TextBlock",
-                              "text": "Order name: ${name}",
-                              "weight": "Bolder",
-                              "wrap": true
-                            },
-                            {
-                              "type": "TextBlock",
-                              "text": "Price: $${total_cost}",
-                              "weight": "Bolder",
-                              "wrap": true
-                            }
-                          ]
-                        },
-                        {
-                          "type": "TextBlock",
-                          "text": " ",
-                          "separator": true
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-            
+          "static_template": {
+            "type": "AdaptiveCard",
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "version": "1.4",
+            "body": [
+              {
+                "type": "Container",
+                "items": [
+                  {
+                    "type": "TextBlock",
+                    "text": "Purchase Orders",
+                    "weight": "Bolder",
+                    "size": "Large",
+                    "separator": true
+                  },
+                  {
+                    "type": "Container",
+                    "$data": "${$root}",
+                    "items": [
+                      {
+                        "type": "Container",
+                        "items": [
+                          {
+                            "type": "TextBlock",
+                            "text": "Order name: ${name}",
+                            "weight": "Bolder",
+                            "wrap": true
+                          },
+                          {
+                            "type": "TextBlock",
+                            "text": "Price: $${total_cost}",
+                            "weight": "Bolder",
+                            "wrap": true
+                          }
+                        ]
+                      },
+                      {
+                        "type": "TextBlock",
+                        "text": " ",
+                        "separator": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
           }
-          }          
+        }
+      }
+    },
+    {
+      "name": "createPurchaseOrder",
+      "description": "Creates a Purchase Order with details",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "vendor_id": {
+            "type": "integer",
+            "description": "ID of thre vendor"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the purchase order"
+          },
+          "po_number":{
+            "type":"string",
+            "description":"Purchase order number"
+          },
+          "shipping_address": {
+            "type": "string",
+            "description": "Shipping address for the order"
+          },
+          "billing_same_as_shipping": {
+            "type": "boolean",
+            "description": "Set to true if the billing address is the same as the shipping address"
+          },
+          "expected_delivery_date": {
+            "type": "string",
+            "description": "Expected delivery date (YYYY-MM-DD)"
+          },
+          "currency_code": {
+            "type": "string",
+            "description": "Currency code (e.g., 'USD', 'EUR')"
+          }
+      },
+      "required":[
+        "vendor_id",
+        "name",
+        "po_number",
+        "shipping_address",
+        "billing_same_as_shipping",
+        "expected_delivery_date",
+        "currency_code"
 
+      ]
+    },
+      "capabilities": {
+        "response_semantics": {
+          "data_path": "$.purchase_order",
+          "properties": {
+            "title": "$.name",
+            "subtitle": "$.id"
           }
+        }
+      }
+    }
   ],
-  
   "runtimes": [
     {
       "type": "OpenApi",
@@ -83,13 +135,16 @@
         "url": "apiSpecificationFile/Order.yml",
         "progress_style": "ShowUsageWithInputAndOutput"
       },
-      "run_for_functions": ["listPurchaseOrder"]
+      "run_for_functions": ["listPurchaseOrder", "createPurchaseOrder"]
     }
   ],
   "capabilities": {
     "conversation_starters": [
       {
-        "text": "List the purchase order"
+        "text": "List the purchase orders"
+      },
+      {
+        "text": "Create a new purchase order"
       }
     ]
   }
