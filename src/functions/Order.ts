@@ -3,8 +3,10 @@ import axios from "axios";
 
 // Constants for the Freshservice API
 const apiKey = "zQi9KIOIFz31yE4HDFL0";
-const baseURL = "https://quadracopilot.freshservice.com/api/v2/purchase_orders?include=purchase_items";
+const baseURL = "https://quadracopilot.freshservice.com/api/v2/purchase_orders";
 
+
+// Function to get the purchase order
 const getPurchaseOrders = async (): Promise<any> => {
   if (!apiKey || !baseURL) {
     console.error("API key or Base URL missing");
@@ -73,8 +75,40 @@ const getPurchaseOrders = async (): Promise<any> => {
   }
 };
 
+
+// Function to create a Purchase order
+const createPurchaseOrder = async (orderData: any): Promise<any> => {
+  if (!apiKey || !baseURL) throw new Error("API key or Base URL must be defined");
+
+  const auth = Buffer.from(`${apiKey}:X`).toString('base64');
+  const headers = {
+    'Authorization': `Basic ${auth}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+
+  try {
+    const response = await axios.post(baseURL, { purchase_order: orderData }, { headers });
+
+    if (response.status !== 201 || !response.data?.purchase_order) {
+      throw new Error("Invalid API response");
+    }
+
+    return response.data.purchase_order;
+
+  } catch (error: any) {
+    console.error(`[${new Date().toISOString()}] Error creating purchase order:`, error.message);
+
+    if (error.response) {
+      throw new Error(error.response.data?.message || "Failed to create purchase order");
+    }
+
+    throw new Error("Network error ");
+  }
+};
+
 /**
- * HTTP handler for fetching and returning purchase orders.
+ * HTTP handler for fetching and creating purchase orders.
  *
  * @param {HttpRequest} req - The HTTP request.
  * @param {InvocationContext} context - The Azure Functions context object.
@@ -85,17 +119,19 @@ export async function Orders(
   context: InvocationContext
 ): Promise<HttpResponseInit> {
   context.log(`[${new Date().toISOString()}] HTTP trigger function processed a request.`);
- 
-  try {
-    const orderResponse = await getPurchaseOrders();
-    context.log(`[${new Date().toISOString()}] Purchase orders fetched:`, JSON.stringify(orderResponse.purchase_orders));
-    
-    return {
-      status: 200,
-      jsonBody: {
-        orders: orderResponse.purchase_orders,
-      },
-    };
+
+  if(req.method === "GET"){
+    console.log(`[${new Date().toISOString()}] GET request processing.`);
+    try {
+      const orderResponse = await getPurchaseOrders();
+      context.log(`[${new Date().toISOString()}] Purchase orders fetched:`, JSON.stringify(orderResponse.purchase_orders));
+      
+      return {
+        status: 200,
+        jsonBody: {
+          orders: orderResponse.purchase_orders,
+        },
+     };
   } catch (error) {
     context.log(`[${new Date().toISOString()}] Error fetching purchase orders:`, error);
 
@@ -106,10 +142,48 @@ export async function Orders(
       },
     };
   }
-}
 
+}  else if (req.method === "POST") {
+  console.log(`[${new Date().toISOString()}]  Processing POST request`);
+
+  try {
+    // Log the raw request body before parsing
+    const rawBody = await req.text();
+    console.log(`[${new Date().toISOString()}] Raw request body:`, rawBody);
+
+    // Parse JSON body
+    const orderData = JSON.parse(rawBody);
+    console.log(`[${new Date().toISOString()}] Received orderData:`, JSON.stringify(orderData));
+
+    //ensure orderdata is not empty
+    if (!orderData || Object.keys(orderData).length === 0) {
+      console.warn(`[${new Date().toISOString()}] [WARN] Received empty order data.`);
+      return {
+        status: 400,
+        jsonBody: { error: "Invalid request: Order data cannot be empty." },
+      };
+    }
+
+    console.log(`[${new Date().toISOString()}] [INFO] Calling createPurchaseOrder function.`);
+    const newOrder = await createPurchaseOrder(orderData);
+    console.log(`[${new Date().toISOString()}] [SUCCESS] Purchase order created successfully.`);
+
+    return {
+      status: 201,
+      jsonBody: newOrder,
+    };
+  } catch (error: any) {
+    console.error(`[${new Date().toISOString()}] [ERROR] Error creating purchase order:`, error.message);
+
+    return {
+      status: 500,
+      jsonBody: { error: "Failed to create purchase order. Please try again." },
+    };
+  }
+}
+}
 app.http("Orders", {
-  methods: ["GET"],
+  methods: ["GET","POST"],
   authLevel: "anonymous",
   handler: Orders,
 });

@@ -16,6 +16,10 @@ Example prompt: "Could you please provide the purchase order number, order name,
 When the user provides specific details (such as order ID), directly fetch and display the relevant purchase order data.
 Example prompt: "Fetching purchase order details for order ID: [Order ID]
 
+###########Creating a purchase order
+Get the necessary details to create a purchase order
+Ask the user one by one
+
 #Handling Incompleted responses:
 If the initial response from FreshService is incomplete, retry fetching the data up to a maximum of 5 attempts with exponential backoff.
 Log the response and any errors encountered during each attempt.
